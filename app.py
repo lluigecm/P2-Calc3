@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 from PIL import Image
 import ctypes
+from GT3 import GT3
 
 sg.theme('DarkBlue3')
 
@@ -61,6 +62,6 @@ class App:
                     print('TO DO GT2')
 
                 if self.selected_gt == 'GT3':
-                    print('TO DO GT3')
+                    GT3()
 
         self.window.close()
