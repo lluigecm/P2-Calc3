@@ -7,10 +7,10 @@ sg.theme('DarkBlue3')
 class App:
 
     def __init__(self):
-        self.selected_gt = None  # Variável para armazenar o GT selecionado
+        self.selected_gt = None
 
         self.layout = [
-            [sg.Text('Selecione o Gerador de Tarefas para visualizar a resolução:')],
+            [sg.Text('Selecione o GT para visualizar as tarefas:')],
             [sg.Button('GT1'), sg.Button('GT2'), sg.Button('GT3')],
             [sg.Image('', key='-IMG-')],
             [sg.Button('', key='-RESOLUCAO-', visible=False)]
