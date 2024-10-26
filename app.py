@@ -54,7 +54,7 @@ class App:
                 self.update_image("imgs/gt3.png", 'GT3')
 
             if event == '-RESOLUCAO-':
-                if self.selected_gt == 'GT1':
+                if self.selected_gt == 'GT1aaaa':
                     print('TO DO GT1')
 
                 if self.selected_gt == 'GT2':
