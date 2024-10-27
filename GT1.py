@@ -1,4 +1,3 @@
-import sympy as sp
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -6,11 +5,11 @@ from Plot_Util import plot3_resolution
 
 
 def GT1():
-    resolutionp1= 'imgs/GT1-t1-p1.png'
-    resolutionp2 = 'imgs/GT1-t1-p2.png'
+    resolution_p1= 'imgs/GT1-t1-p1.png'
+    resolution_p2 = 'imgs/GT1-t1-p2.png'
     resolution2 = 'imgs/GT1-t2.png'
     fig = solve_eq()
-    plot3_resolution(resolutionp1, resolutionp2, resolution2, fig)
+    plot3_resolution(resolution_p1, resolution_p2, resolution2, fig)
 
 def solve_eq():
     x_vals = np.linspace(-2, 2, 50)
