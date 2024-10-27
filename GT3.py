@@ -6,7 +6,7 @@ from Plot_Util import plot_resolution
 
 
 def GT3():
-    resolution = 'imgs/resolutionGT3.png'
+    resolution = 'imgs/GT3-t1.png'
     fig = solve_eq()
     plot_resolution(resolution, fig)
 

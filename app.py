@@ -1,6 +1,8 @@
 import PySimpleGUI as sg
 from PIL import Image
 import ctypes
+
+from GT1 import GT1
 from GT3 import GT3
 
 sg.theme('DarkBlue3')
@@ -56,7 +58,7 @@ class App:
 
             if event == '-RESOLUCAO-':
                 if self.selected_gt == 'GT1':
-                    print('TO DO GT1')
+                    GT1()
 
                 if self.selected_gt == 'GT2':
                     print('TO DO GT2')
