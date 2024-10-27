@@ -1,16 +1,13 @@
-import ctypes
-from cProfile import label
-
 import sympy as sp
 import matplotlib.pyplot as plt
 import numpy as np
-import PySimpleGUI as sg
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+from Plot_Util import plot_resolution
 
 
 def GT3():
-    resolution, fig = solve_eq()
+    resolution = 'imgs/resolutionGT3.png'
+    fig = solve_eq()
     plot_resolution(resolution, fig)
 
 def solve_eq():
@@ -56,7 +53,7 @@ def solve_eq():
     ax = fig.add_subplot(111, projection='3d')
 
     # Plano de restrição: x + y + z = 12
-    xx, yy = np.meshgrid(np.linspace(0, 5, 30), np.linspace(0, 5, 30))
+    xx, yy = np.meshgrid(np.linspace(0, 10, 30), np.linspace(0, 10, 30))
     zz = 12 - xx - yy
     ax.plot_surface(xx, yy, zz, color='cyan', alpha=0.5, rstride=100, cstride=100, label = "Vinculo")
 
@@ -80,40 +77,5 @@ def solve_eq():
     ax.legend()
     plt.title("Resolução da t2 do GT3")
 
-    # Cria a representação LaTeX da solução
-    latex_solution = []
 
-    return '\n'.join(latex_solution), fig
-
-def plot_resolution(resolution, fig):
-    # Abra um pop up maximizado dividido em duas partes iguais
-    layout = [
-        [sg.Canvas(key='canvas1', expand_x=True, expand_y=True), sg.Canvas(key='canvas2', expand_x=True, expand_y=True)],
-    ]
-
-    user32 = ctypes.windll.user32
-    screen_width, screen_height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-
-    window = sg.Window('Resolução GT3', layout, finalize=True, auto_size_text=True, element_justification='center', size=(screen_width, screen_height))
-
-    # Exibe a resolução em LaTeX
-    canvas_elem1 = window['canvas1']
-    figura1, ax1 = plt.subplots()
-    ax1.text(0.5, 0.5, resolution, horizontalalignment='center', verticalalignment='center', fontsize=20)
-    ax1.axis('off')
-    canvas1 = FigureCanvasTkAgg(figura1, canvas_elem1.TKCanvas)
-    canvas1.draw()
-    canvas1.get_tk_widget().pack(fill='both', expand=True)
-
-    # Exibe o gráfico interativo
-    canvas_elem2 = window['canvas2']
-    canvas2 = FigureCanvasTkAgg(fig, canvas_elem2.TKCanvas)
-    canvas2.draw()
-    canvas2.get_tk_widget().pack(fill='both', expand=True)
-
-    while True:
-        event, values = window.read()
-        if event == sg.WIN_CLOSED or event == '-CLOSE-':
-            break
-
-    window.close()
+    return fig
