@@ -3,6 +3,7 @@ from PIL import Image
 import ctypes
 
 from GT1 import GT1
+from GT2 import GT2
 from GT3 import GT3
 
 sg.theme('DarkBlue3')
@@ -61,7 +62,7 @@ class App:
                     GT1()
 
                 if self.selected_gt == 'GT2':
-                    print('TO DO GT2')
+                    GT2()
 
                 if self.selected_gt == 'GT3':
                     GT3()
