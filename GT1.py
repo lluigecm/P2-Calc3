@@ -33,7 +33,7 @@ def solve_eq():
     ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.6, edgecolor='none', label= 'h(x, y)')
 
     # Plotar o ponto Q e o ponto (Q, h(Q))
-    ax.scatter(Q_x, Q_y, h_Q, color='red', s=50, label='Ponto Q (1, 2, h(Q))')
+    ax.scatter(Q_x, Q_y, h_Q, color='red', s=50, label='Ponto(Q, h(Q))')
 
     # Adicionar o vetor gradiente no ponto Q
     ax.quiver(Q_x, Q_y, h_Q, grad_Q_x, grad_Q_y, 0, color='blue', length=0.5, normalize=True,

@@ -12,7 +12,7 @@ def plot_resolution(resolution, fig):
     user32 = ctypes.windll.user32
     screen_width, screen_height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
-    window = sg.Window('Resolução GT3', layout, location=(0,0) ,finalize=True, auto_size_text=True, element_justification='center', size=(screen_width, screen_height), background_color='white')
+    window = sg.Window('Resolução GT3', layout, location=(0,0) ,finalize=True, auto_size_text=True, element_justification='center', size=(screen_width-10, screen_height-10), background_color='white')
 
     #Fundo de resolution seja branco
     window['canvas'].Widget.config(bg='white')
@@ -40,7 +40,7 @@ def plot3_resolution(resolution_p1, resolution_p2, resolution2, fig):
     user32 = ctypes.windll.user32
     screen_width, screen_height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
-    window = sg.Window('Resolução GT3', layout, location=(0,0), finalize=True, auto_size_text=True, element_justification='center', size=(screen_width, screen_height), background_color='white')
+    window = sg.Window('Resolução GT3', layout, location=(0,0), finalize=True, auto_size_text=True, element_justification='center', size=(screen_width-10, screen_height-10), background_color='white')
 
     # Fundo de resolution seja branco
     window['canvas'].Widget.config(bg='white')

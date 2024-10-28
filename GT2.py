@@ -71,7 +71,7 @@ def criar_texto_latex(fig):
 
     # Adicionar os blocos de texto com espaçamento vertical ajustado
     y_position = 0.95
-    font_size = 8
+    font_size = 12
     for block in text_blocks:
         ax.text(0.05, y_position, block, ha='left', va='top', fontsize=font_size)
         y_position -= 0.05
