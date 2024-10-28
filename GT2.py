@@ -13,11 +13,6 @@ def plano_tangente(x, y):
     """Calcula z para o plano tangente: 12x + 24y + 8√6z = 96."""
     return (96 - 12 * x - 24 * y) / (8 * np.sqrt(6))
 
-# --- Configuração da janela Tkinter ---
-root = tk.Tk()
-root.title("Resolução GT2")
-root.geometry("1200x600")
-
 # --- Função para criar o gráfico 3D ---
 def criar_grafico_3d(fig):
     ax = fig.add_subplot(111, projection='3d')
@@ -81,31 +76,37 @@ def criar_texto_latex(fig):
         ax.text(0.05, y_position, block, ha='left', va='top', fontsize=font_size)
         y_position -= 0.05
 
-# --- Criação das figuras ---
-fig_latex = Figure(figsize=(6, 6))
-criar_texto_latex(fig_latex)
+def GT2():
+    #Configuração da janela Tkinter
+    root = tk.Tk()
+    root.title("Resolução GT2")
+    root.geometry("1200x600")
 
-fig_3d = Figure(figsize=(6, 6))
-criar_grafico_3d(fig_3d)
+    # --- Criação das figuras ---
+    fig_latex = Figure(figsize=(6, 6))
+    criar_texto_latex(fig_latex)
 
-# --- Interface gráfica ---
-frame_main = tk.Frame(root)
-frame_main.pack(fill=tk.BOTH, expand=True)
+    fig_3d = Figure(figsize=(6, 6))
+    criar_grafico_3d(fig_3d)
 
-# Frame para o texto à esquerda
-frame_left = tk.Frame(frame_main)
-frame_left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    # --- Interface gráfica ---
+    frame_main = tk.Frame(root)
+    frame_main.pack(fill=tk.BOTH, expand=True)
 
-canvas_latex = FigureCanvasTkAgg(fig_latex, master=frame_left)
-canvas_latex.draw()
-canvas_latex.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    # Frame para o texto à esquerda
+    frame_left = tk.Frame(frame_main)
+    frame_left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-# Frame para o gráfico à direita
-frame_right = tk.Frame(frame_main)
-frame_right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+    canvas_latex = FigureCanvasTkAgg(fig_latex, master=frame_left)
+    canvas_latex.draw()
+    canvas_latex.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
-canvas_3d = FigureCanvasTkAgg(fig_3d, master=frame_right)
-canvas_3d.draw()
-canvas_3d.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    # Frame para o gráfico à direita
+    frame_right = tk.Frame(frame_main)
+    frame_right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-root.mainloop()
+    canvas_3d = FigureCanvasTkAgg(fig_3d, master=frame_right)
+    canvas_3d.draw()
+    canvas_3d.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    root.mainloop()
