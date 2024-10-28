@@ -2,7 +2,7 @@ import numpy as np
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from mpl_toolkits.mplot3d import Axes3D
+
 
 # --- Funções para a superfície e o plano tangente ---
 def superficie_S(x, y):

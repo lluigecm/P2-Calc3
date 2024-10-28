@@ -8,6 +8,7 @@ from GT3 import GT3
 
 sg.theme('DarkBlue3')
 
+
 class App:
 
     def __init__(self):
