@@ -1,6 +1,4 @@
 import PySimpleGUI as sg
-from PIL import Image
-import ctypes
 
 from src.GT1 import GT1
 from src.GT2 import GT2
@@ -40,22 +38,7 @@ class App:
             window.extend_layout(window['-ACT-'], input_layout)
             window['-ACT-'].update('')
             window['-CALC-'].update(visible=True)
-        elif gt == 'GT2':
-            for key in ['-INPUT1-', '-INPUT2-', '-INPUT3-']:
-                if key in window.AllKeysDict:
-                    window[key].ParentRowFrame.pack_forget()
-                    del window.AllKeysDict[key]
-
-            # Add new input fields
-            input_layout = [
-                [sg.Text('Função da Superfície: '), sg.Input(key='-INPUT1-')],
-                [sg.Text('Ponto M(x,y,z):          '), sg.Input(key='-INPUT2-')]
-            ]
-
-            window.extend_layout(window['-ACT-'], input_layout)
-            window['-ACT-'].update('')
-            window['-CALC-'].update(visible=True)
-        else:
+        elif gt == 'GT3':
             for key in ['-INPUT1-', '-INPUT2-']:
                 if key in window.AllKeysDict:
                     window[key].ParentRowFrame.pack_forget()
@@ -71,7 +54,6 @@ class App:
             window['-ACT-'].update('')
             window['-CALC-'].update(visible=True)
 
-
     def run(self):
         while True:
             event, values = self.window.read()
@@ -84,8 +66,7 @@ class App:
                 self.update_layout(self.window, 'GT1')
 
             if event == '-GT2-':
-                self.selected_gt = 'GT2'
-                self.update_layout(self.window, 'GT2')
+                GT2().run()
 
             if event == '-GT3-':
                 self.selected_gt = 'GT3'
@@ -94,8 +75,6 @@ class App:
             if event == '-CALC-':
                 if self.selected_gt == 'GT1':
                     gt1 = GT1(values['-INPUT1-'], list(values['-INPUT2-'].split(',')))
-                if self.selected_gt == 'GT2':
-                    gt2 = GT2(values['-INPUT1-'], list(values['-INPUT2-'].split(',')))
                 if self.selected_gt == 'GT3':
                     gt3 = GT3(values['-INPUT1-'], list(values['-INPUT2-'].split(',')))
 
