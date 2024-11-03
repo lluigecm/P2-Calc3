@@ -1,5 +1,8 @@
 import sympy as sp
-import PySimpleGUI as sg
 
-def GT3(window : sg.Window):
-    pass
+
+class GT3():
+
+    def __init__(self, function, constraint):
+        self.function = function
+        self.constraint = constraint
