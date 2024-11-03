@@ -71,7 +71,7 @@ class GT2():
         # Resolvendo a equação da superfície para z
         try:
             solucao_z = solve(Eq(superficie, 0), z)
-            funcao_z = solucao_z[0]  # Seleciona a primeira solução (em caso de múltiplas raízes)
+            funcao_z = -solucao_z[0]  # Seleciona a primeira solução (em caso de múltiplas raízes)
             superf_func = lambdify((x, y), funcao_z, 'numpy')
         except Exception as e:
             ax.clear()
