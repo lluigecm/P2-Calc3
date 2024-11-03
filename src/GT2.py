@@ -87,9 +87,9 @@ def calcular():
     else:
         Z_plano = np.full_like(X, np.nan)  # Em caso de plano paralelo ao eixo Z
     
-    # Plotando a superfície e o plano tangente
-    ax.plot_surface(X, Y, Z_superficie, color='lightblue', alpha=0.5, edgecolor='none')
-    ax.plot_surface(X, Y, Z_plano, color='orange', alpha=0.5, edgecolor='none')
+    # Plotando a superfície e o plano tangente com legendas
+    ax.plot_surface(X, Y, Z_superficie, color='lightblue', alpha=0.5, edgecolor='none', label="Superfície")
+    ax.plot_surface(X, Y, Z_plano, color='orange', alpha=0.5, edgecolor='none', label="Plano Tangente")
     
     # Adicionando o ponto M e os vetores do gradiente
     ax.scatter([float(ponto_x.evalf())], [float(ponto_y.evalf())], [float(ponto_z.evalf())], color='red', s=50, label="Ponto M")
@@ -105,7 +105,7 @@ def calcular():
 
 # Configurando interface com Tkinter
 root = tk.Tk()
-root.title("Plano Tangente e Gradiente")
+root.title("GT2")
 
 # Campo para entrada da função
 tk.Label(root, text="Superfície S(x, y, z) = 0:").grid(row=0, column=0, sticky="w")
