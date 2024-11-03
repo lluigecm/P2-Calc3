@@ -48,8 +48,8 @@ class App:
             # Add new input fields
             input_layout = [
                 [sg.Text('Multiplicadores de Lagrange:', justification='center', key='-TITLE-')],
-                [sg.Text('f(x,y,z) =   '), sg.Input(key='-INPUT1-')],
-                [sg.Text('Vinculo = 0:    '), sg.Input(key='-INPUT2-')]
+                [sg.Text('f(x,y,z) =    '), sg.Input(key='-INPUT1-')],
+                [sg.Text('Vinculo = 0:'), sg.Input(key='-INPUT2-')]
             ]
 
             window.extend_layout(window['-ACT-'], input_layout)
