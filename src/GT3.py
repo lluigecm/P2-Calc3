@@ -1,61 +1,106 @@
-import matplotlib.pyplot as plt
+import re
 import numpy as np
+import sympy as sp
+from matplotlib import pyplot as plt
 
-from Plot_Util import plot_resolution
+from src.Plot_Util import plot_resolution
 
 
-def GT3():
-    resolution = './imgs/GT3-t1.png'
-    fig = solve_eq()
-    plot_resolution(resolution, fig)
+class GT3():
 
-def solve_eq():
-    x, y, z = 1.5, 6, 4.5  # valores hipotéticos para ilustrar o gráfico
+    def __init__(self, function, constraint):
+        x, y, z, λ= sp.symbols('x y z λ')
 
-    # Definição da função f(x, y, z)
-    def f(x, y, z):
-        return 4 * x ** 2 + y ** 2 + 5 * z ** 2
+        self.function = sp.sympify(re.sub('\^','**',function))
+        self.constraint = sp.sympify(constraint)
 
-    # Valor da superfície de nível
-    c = f(x, y, z)
+        self.extremes = self.lagrange_extremes(self.function, self.constraint)
 
-    # Preparando a malha para a superfície de nível de f
-    x_vals = np.linspace(0, 3, 100)
-    y_vals = np.linspace(0, 9, 100)
-    X, Y = np.meshgrid(x_vals, y_vals)
-    Z = np.sqrt((c - 4 * X ** 2 - Y ** 2) / 5)
+        self.plot = self.solve_eq(self.function, self.constraint)
 
-    # Configuração do plano de vínculo x + y + z = 12
-    x_plane_vals = np.linspace(0, 5, 50)
-    y_plane_vals = np.linspace(0, 10, 50)
-    X_plane, Y_plane = np.meshgrid(x_plane_vals, y_plane_vals)
-    Z_plane = 12 - X_plane - Y_plane
+        self.solution_latex = (f'Extremos da função: $({sp.sympify(self.extremes[0][x])}, {sp.sympify(self.extremes[0][y])}, {sp.sympify(self.extremes[0][z])})$')
 
-    # Gradiente de f no ponto crítico
-    grad_f = np.array([8 * x, 2 * y, 10 * z])
+        plot_resolution(self.solution_latex, self.plot)
 
-    # Plotagem
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
+    def lagrange_extremes(self, func, constraint):
+        x, y, z, λ = sp.symbols('x y z λ')
 
-    # Plotando a superfície de nível de f
-    ax.plot_surface(X, Y, Z, color='cyan', alpha=0.5, rstride=10, cstride=10, edgecolor='none', label='Superfície de nível de f')
+        f = func
 
-    # Plotando o plano do vínculo
-    ax.plot_surface(X_plane, Y_plane, Z_plane, color='lightgreen', alpha=0.5, rstride=10, cstride=10, edgecolor='none', label='Plano do vínculo')
+        g = constraint
 
-    # Ponto crítico
-    ax.scatter(x, y, z, color='red', s=100, label="Ponto Crítico")
+        grad_f = [sp.diff(f, var) for var in (x, y, z)]
+        grad_g = [sp.diff(g, var) for var in (x, y, z)]
 
-    # Gradiente de f como um vetor
-    ax.quiver(x, y, z, grad_f[0], grad_f[1], grad_f[2], color='blue', length=2, normalize=True, label="Gradiente de f")
+        # Sistema de equações dos multiplicadores de Lagrange
+        equations = [
+                        grad_f[i] - λ * grad_g[i] for i in range(3)
+                    ] + [g]  # Inclui o vínculo g = 0
 
-    # Labels e legenda
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
-    ax.legend()
+        # Resolvendo o sistema de equações
+        solutions = sp.solve(equations, (x, y, z, λ), dict=True)
 
-    plt.title("Resolução da t2 do GT3")
+        return solutions
 
-    return fig
+    def solve_eq(self, func, constraint):
+        x, y, z, λ = sp.symbols('x y z λ')
+
+        # Gradiente da função f
+        grad_f = [sp.diff(func, var) for var in (x, y, z)]
+
+        # Gradiente da função g
+        grad_g = [sp.diff(constraint, var) for var in (x, y, z)]
+
+        # Sistema de equações dos multiplicadores de Lagrange
+        equations = [
+                        grad_f[i] - λ * grad_g[i] for i in range(3)
+                    ] + [constraint]
+
+        # Resolvendo o sistema de equações
+        solutions = sp.solve(equations, (x, y, z, λ), dict=True)
+
+        # Obtendo o primeiro ponto crítico (x, y, z)
+        if solutions:
+            px, py, pz = solutions[0][x], solutions[0][y], solutions[0][z]
+            point = (float(px), float(py), float(pz))
+        else:
+            print("Nenhuma solução encontrada.")
+            return
+
+        # Passo 2: Representação Gráfica
+
+        # Convertendo para funções numéricas
+        f_lambdified = sp.lambdify((x, y, z), func, 'numpy')
+        g_lambdified = sp.lambdify((x, y, z), constraint, 'numpy')
+
+        # Definindo a região de plotagem
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        # Ponto extremo obtido
+        ax.scatter(point[0], point[1], point[2], color='red', s=50, label='Ponto extremo')
+
+        # Superfície do vínculo
+        X, Y = np.linspace(point[0] - 5, point[0] + 5, 50), np.linspace(point[1] - 5, point[1] + 5, 50)
+        X, Y = np.meshgrid(X, Y)
+        Z = g_lambdified(X, Y, np.zeros_like(X))  # Usando a função lambdificada para calcular Z
+        ax.plot_surface(X, Y, Z, alpha=0.5, color='cyan', label='Vínculo')
+
+        # Superfície de nível de f
+        level_value = f_lambdified(point[0], point[1], point[2])
+        Z_f = (level_value - f_lambdified(X, Y, np.zeros_like(X))) / 5  # Reescrevendo f em função de Z
+        ax.plot_surface(X, Y, Z_f, alpha=0.3, color='orange', label='Nível de f')
+
+        # Gradiente de f no ponto
+        grad_f_at_point = np.array(
+            [sp.diff(func, var).subs({x: point[0], y: point[1], z: point[2]}) for var in (x, y, z)], dtype=float)
+        ax.quiver(point[0], point[1], point[2], *grad_f_at_point, color='purple', length=0.35, label='Gradiente de f')
+
+        # Configurações do gráfico
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+        ax.legend()
+        ax.set_title('Multiplicadores de Lagrange')
+
+        return fig

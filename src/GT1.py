@@ -1,49 +1,104 @@
-import matplotlib.pyplot as plt
+from math import sqrt
+from re import sub
+
 import numpy as np
+import sympy as sp
+from matplotlib import pyplot as plt
+from sympy import lambdify, symbols, diff, sympify
 
-from Plot_Util import plot3_resolution
+from src.Plot_Util import plot_resolution
 
 
-def GT1():
-    resolution_p1= './imgs/GT1-t1-p1.png'
-    resolution_p2 = './imgs/GT1-t1-p2.png'
-    resolution2 = './imgs/GT1-t2.png'
-    fig = solve_eq()
-    plot3_resolution(resolution_p1, resolution_p2, resolution2, fig)
+class GT1():
 
-def solve_eq():
-    x_vals = np.linspace(-2, 2, 50)
-    y_vals = np.linspace(-2, 2, 50)
-    X, Y = np.meshgrid(x_vals, y_vals)
+    def __init__(self, function, point):
+        self.function = sub(r'\^', '**', function)
+        self.point = self.parse_point(point)
 
-    # Calcular Z diretamente usando a expressão de h(x, y)
-    Z = X ** 2 + (1 / 4) * Y ** 2 + 2
+        self.gradients = self.calc_gradient( self.function, point)
+        self.duf = self.calc_duf(self.point, self.gradients)
+        self.graph = self.solve(self.function, self.point)
+        self.max_rate = sqrt(self.gradients[1][0] ** 2 + self.gradients[1][1] ** 2)
 
-    # Ponto Q e cálculo de h(Q) diretamente
-    Q_x, Q_y = 1, 2
-    h_Q = Q_x ** 2 + (1 / 4) * Q_y ** 2 + 2
+        self.solution_latex = (f'$D_u$f({self.point[0]}, {self.point[1]}) = ${self.duf:.3f}$\n'
+                               f'Cresce mais rapidamente em direção de ({self.gradients[1][0]:.3f}, {self.gradients[1][1]:.3f})\n'
+                               f'Taxa máxima de crescimento: {self.max_rate:.3f}')
 
-    # Calcular o gradiente de h no ponto Q = (1, 2)
-    grad_Q_x = 2 * Q_x
-    grad_Q_y = (1 / 2) * Q_y
+        plot_resolution(self.solution_latex, self.graph)
 
-    # Configuração do gráfico 3D
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.6, edgecolor='none', label= 'h(x, y)')
+    def parse_point(self, point):
+        return [sp.sympify(p) for p in point]
 
-    # Plotar o ponto Q e o ponto (Q, h(Q))
-    ax.scatter(Q_x, Q_y, h_Q, color='red', s=50, label='Ponto(Q, h(Q))')
+    def calc_gradient(self, function, point):
+        x, y = sp.symbols('x y')
+        f = sp.sympify(function)
 
-    # Adicionar o vetor gradiente no ponto Q
-    ax.quiver(Q_x, Q_y, h_Q, grad_Q_x, grad_Q_y, 0, color='blue', length=0.5, normalize=True,
-              label='Gradiente de h em Q')
+        gradient = [f.diff(x), f.diff(y)]
+        gradient_on_point = [gradient[0].subs(x, point[0]).subs(y, point[1]), gradient[1].subs(x, point[0]).subs(y, point[1])]
 
-    # Configuração dos eixos e título
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    ax.set_title('Resolução da t3 do GT1')
-    ax.legend()
+        return gradient, gradient_on_point
 
-    return fig
+    def calc_duf(self, point, gradients):
+        uni = self.verify_vector_unit(point)
+        gradient = gradients[1]
+
+        duf = gradient[0] * uni[1] + gradient[1] * uni[0]
+
+        return duf
+
+    def verify_vector_unit(self, vector):
+        magnitude = sqrt(sum([component ** 2 for component in vector]))
+
+        if magnitude != 1:
+            vector = [component / magnitude for component in vector]
+
+        return vector
+
+    # In src/GT1.py
+    def solve(self, function, point):
+        # Definindo as variáveis simbólicas
+        x, y = symbols('x y')
+
+        # Convertendo a função de string para expressão simbólica
+        h = sympify(function)
+
+        # Calculando o gradiente de h em relação a x e y
+        grad_h_x = diff(h, x)
+        grad_h_y = diff(h, y)
+        gradiente_h = [grad_h_x, grad_h_y]
+
+        # Avaliando o gradiente no ponto Q
+        Qx, Qy = point
+        gradiente_h_Q = [g.evalf(subs={x: Qx, y: Qy}) for g in gradiente_h]
+
+        # Convertendo h(x, y) em uma função utilizável para o gráfico
+        h_func = lambdify((x, y), h, 'numpy')
+
+        # Gerando o espaço de valores para x e y para o gráfico
+        x_vals = np.linspace(-2, 2, 100)
+        y_vals = np.linspace(-2, 2, 100)
+        X, Y = np.meshgrid(x_vals, y_vals)
+        Z = h_func(X, Y)
+
+        # Plotando o gráfico 3D de h(x, y)
+        fig = plt.figure(figsize=(15, 10))  # Increase the figure size
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7, label='h(x, y)')
+
+        # Gradiente de h em Q
+        ax.quiver(Qx, Qy, h_func(Qx, Qy), gradiente_h_Q[0], gradiente_h_Q[1], 0, color='r',length = 0.25, label='∇h(Q)')
+
+        # Ponto Q
+        ax.scatter(Qx, Qy, h_func(Qx, Qy), color='r', s=100, label='Ponto Q')
+
+        #Gradiente de h em (Q, h(Q))
+        ax.quiver(Qx, Qy, h_func(Qx, Qy), gradiente_h_Q[0], gradiente_h_Q[1], h_func(Qx, Qy),length = 0.25, color='b', label='∇h(Q, h(Q))')
+
+        # Configurações do gráfico
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_zlabel('h(x, y)')
+        ax.set_title('Gráfico da função h(x, y) e gradiente em Q')
+        ax.legend()
+
+        return fig
