@@ -14,7 +14,7 @@ class GT1():
 
     def __init__(self, function, point):
         self.function = sub(r'\^', '**', function)
-        self.point = list(map(float, point))
+        self.point = self.parse_point(point)
 
         self.gradients = self.calc_gradient( self.function, point)
         self.duf = self.calc_duf(self.point, self.gradients)
@@ -26,6 +26,9 @@ class GT1():
                                f'Taxa máxima de crescimento: {self.max_rate:.3f}')
 
         plot_resolution(self.solution_latex, self.graph)
+
+    def parse_point(self, point):
+        return [sp.sympify(p) for p in point]
 
     def calc_gradient(self, function, point):
         x, y = sp.symbols('x y')
